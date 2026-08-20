@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admisiones | Liceo Americano Católico — UELAC</title>
+<link rel="stylesheet" href="styles.css">
+<script>
+(function(){
+  var hour = new Date().getHours();
+  var isNight = hour >= 18 || hour < 6;
+  if (isNight) document.documentElement.classList.add('dark-mode');
+})();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+  <div class="headbar">
+    <div class="head-top">
+      <a class="brand" href="index.html">
+        <span class="brand-icon"><img class="logo-img logo-light" src="images/logo.png" alt="UELAC" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'L'}))"><img class="logo-img logo-dark" src="images/logo-dark.png" alt="UELAC" onerror="this.style.display='none';if(this.previousElementSibling)this.previousElementSibling.style.display='block';"></span>
+        <span class="brand-name">Liceo Americano Católico<span>UELAC · Desde 1992</span></span>
+      </a>
+      <div class="head-actions">
+        <a class="btn sm head-cta" href="admisiones.html">Admisiones</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú"><span></span></button>
+      </div>
+    </div>
+    <nav class="mainnav" id="mainNav">
+      <a href="index.html">Inicio</a>
+      <a href="quienes-somos.html">Quiénes somos</a>
+      <a href="oferta-academica.html">Oferta académica</a>
+      <a href="admisiones.html" class="current">Admisiones</a>
+      <a href="extracurriculares.html">Extracurriculares</a>
+      <a href="experiencia.html">Experiencia</a>
+      <a href="servicios.html">Servicios</a>
+      <a href="documentos.html">Documentos</a>
+      <a href="informacion.html">Información</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap page-hero">
+  <div class="page-hero-split">
+    <div>
+      <div class="crumb"><a href="index.html">Inicio</a> / Proceso de ingreso</div>
+      <span class="eyebrow">Admisiones</span>
+      <h1>Proceso de ingreso</h1>
+      <p class="lead">Todos los estudiantes de nuevo ingreso deben cumplir el siguiente procedimiento.</p>
+    </div>
+    <div class="photo-frame photo-frame-compact"><img src="images/admisiones.jpg" alt="Admisiones UELAC" onerror="this.remove()"></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    <div class="steps">
+      <div class="step"><div class="num">1</div><h3>Agenda tu cita</h3><p>Solicita la entrevista de admisión para el estudiante postulante.</p></div>
+      <div class="step"><div class="num">2</div><h3>Asiste a la entrevista</h3><p>El postulante debe asistir acompañado de su representante.</p></div>
+      <div class="step"><div class="num">3</div><h3>Presenta tus documentos</h3><p>Certificado de calificaciones más reciente (no aplica para Inicial 2 y 1.° de EGB).</p></div>
+    </div>
+    <div class="cta-band">
+      <div>
+        <h3>¿Listo para iniciar el camino con nosotros?</h3>
+        <p>Agenda tu cita o conversa con nuestra oficina de admisiones hoy mismo.</p>
+        <div class="cta-actions">
+          <a class="btn dark" href="tel:0959284565">Llamar ahora</a>
+          <a class="btn outline" style="border-color:var(--ink);color:var(--ink)" href="https://wa.me/593959284565?text=%F0%9F%91%8B%20Hola%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20su%20escuelita%20%F0%9F%8F%AB" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.26-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.55-3.7 8.24-8.25 8.24Zm4.52-6.17c-.25-.12-1.46-.72-1.68-.8-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.96-.14.16-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42h-.48c-.16 0-.43.06-.65.3-.23.24-.86.84-.86 2.04 0 1.2.88 2.36 1 2.52.12.16 1.73 2.64 4.2 3.7.59.25 1.05.4 1.4.52.59.19 1.13.16 1.55.1.47-.07 1.46-.6 1.67-1.17.2-.58.2-1.07.14-1.17-.06-.1-.22-.16-.47-.28Z"/></svg>
+            Contactar
+          </a>
+        </div>
+      </div>
+      <div class="cta-icon">
+        <span class="cta-icon-fallback">🤍</span>
+        <video autoplay loop muted playsinline onerror="this.style.display='none'">
+          <source src="images/cta-animacion.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">
+          <span class="brand-icon"><img class="logo-img logo-light" src="images/logo.png" alt="UELAC" style="width:100%;height:100%;object-fit:cover;border-radius:9px" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'L'}))"><img class="logo-img logo-dark" src="images/logo-dark.png" alt="UELAC" style="width:100%;height:100%;object-fit:cover;border-radius:9px" onerror="this.style.display='none';if(this.previousElementSibling)this.previousElementSibling.style.display='block';"></span>
+          <span class="brand-name">Liceo Americano Católico</span>
+        </div>
+        <p style="max-width:280px;font-size:.9rem">Educando para el futuro desde 1992. Formación integral desde inicial hasta bachillerato general y técnico.</p>
+        <div class="foot-social">
+          <a href="https://wa.me/593959284565" target="_blank" rel="noopener">WA</a>
+          <a href="#">FB</a>
+          <a href="#">IG</a>
+        </div>
+      </div>
+      <div>
+        <h4>Navegación</h4>
+        <ul>
+          <li><a href="quienes-somos.html">Quiénes somos</a></li>
+          <li><a href="oferta-academica.html">Oferta académica</a></li>
+          <li><a href="admisiones.html">Admisiones</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Recursos</h4>
+        <ul>
+          <li><a href="documentos.html">Documentos</a></li>
+          <li><a href="servicios.html">Servicios</a></li>
+          <li><a href="extracurriculares.html">Extracurriculares</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="mailto:liceo.catolico@hotmail.com">liceo.catolico@hotmail.com</a></li>
+          <li><a href="tel:0959284565">0959 284 565</a></li>
+          <li><a href="informacion.html">Av. de las Américas e Isabel la Católica</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Unidad Educativa Liceo Americano Católico — UELAC</span>
+      <span>34 años educando para el futuro</span>
+    </div>
+  </div>
+</footer>
+<script src="script.js"></script>
+</body>
+</html>
