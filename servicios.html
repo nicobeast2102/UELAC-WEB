@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servicios | Liceo Americano Católico — UELAC</title>
+<link rel="stylesheet" href="styles.css">
+<script>
+(function(){
+  var hour = new Date().getHours();
+  var isNight = hour >= 18 || hour < 6;
+  if (isNight) document.documentElement.classList.add('dark-mode');
+})();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+  <div class="headbar">
+    <div class="head-top">
+      <a class="brand" href="index.html">
+        <span class="brand-icon"><img class="logo-img logo-light" src="images/logo.png" alt="UELAC" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'L'}))"><img class="logo-img logo-dark" src="images/logo-dark.png" alt="UELAC" onerror="this.style.display='none';if(this.previousElementSibling)this.previousElementSibling.style.display='block';"></span>
+        <span class="brand-name">Liceo Americano Católico<span>UELAC · Desde 1992</span></span>
+      </a>
+      <div class="head-actions">
+        <a class="btn sm head-cta" href="admisiones.html">Admisiones</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú"><span></span></button>
+      </div>
+    </div>
+    <nav class="mainnav" id="mainNav">
+      <a href="index.html">Inicio</a>
+      <a href="quienes-somos.html">Quiénes somos</a>
+      <a href="oferta-academica.html">Oferta académica</a>
+      <a href="admisiones.html">Admisiones</a>
+      <a href="extracurriculares.html">Extracurriculares</a>
+      <a href="experiencia.html">Experiencia</a>
+      <a href="servicios.html" class="current">Servicios</a>
+      <a href="documentos.html">Documentos</a>
+      <a href="informacion.html">Información</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap page-hero">
+  <div class="crumb"><a href="index.html">Inicio</a> / Acompañamos a cada familia</div>
+  <span class="eyebrow">Servicios</span>
+  <h1>Acompañamos a cada familia</h1>
+  <p class="lead">Servicios pensados para el bienestar y la tranquilidad de nuestra comunidad educativa.</p>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    <div class="serv-grid">
+      <div class="serv-card">
+        <div class="serv-photo"><img src="images/servicio-transporte.jpg" alt="Transporte escolar" onerror="this.remove()"></div>
+        <div class="mark" style="background:var(--badge-lav)">🚐</div>
+        <h3>Transporte escolar</h3>
+        <p>Servicio puerta a puerta para garantizar la seguridad y puntualidad de nuestros estudiantes.</p>
+        <a class="btn outline sm" href="docs/solicitud-transporte.pdf" target="_blank" rel="noopener">Descargar solicitud</a>
+      </div>
+      <div class="serv-card">
+        <div class="serv-photo"><img src="images/servicio-refrigerio.jpg" alt="Refrigerio" onerror="this.remove()"></div>
+        <div class="mark" style="background:var(--yellow-soft)">🍔</div>
+        <h3>Refrigerio</h3>
+        <p>Servicio de refrigerio para los recesos de todos los niveles educativos.</p>
+      </div>
+      <div class="serv-card">
+        <div class="serv-photo"><img src="images/servicio-alimentacion.jpg" alt="Alimentación" onerror="this.remove()"></div>
+        <div class="mark" style="background:var(--badge-rose)">🍽️</div>
+        <h3>Alimentación</h3>
+        <p>Servicio de alimentos para almuerzos, pensado en el bienestar de nuestros estudiantes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">
+          <span class="brand-icon"><img class="logo-img logo-light" src="images/logo.png" alt="UELAC" style="width:100%;height:100%;object-fit:cover;border-radius:9px" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'L'}))"><img class="logo-img logo-dark" src="images/logo-dark.png" alt="UELAC" style="width:100%;height:100%;object-fit:cover;border-radius:9px" onerror="this.style.display='none';if(this.previousElementSibling)this.previousElementSibling.style.display='block';"></span>
+          <span class="brand-name">Liceo Americano Católico</span>
+        </div>
+        <p style="max-width:280px;font-size:.9rem">Educando para el futuro desde 1992. Formación integral desde inicial hasta bachillerato general y técnico.</p>
+        <div class="foot-social">
+          <a href="https://wa.me/593959284565" target="_blank" rel="noopener">WA</a>
+          <a href="#">FB</a>
+          <a href="#">IG</a>
+        </div>
+      </div>
+      <div>
+        <h4>Navegación</h4>
+        <ul>
+          <li><a href="quienes-somos.html">Quiénes somos</a></li>
+          <li><a href="oferta-academica.html">Oferta académica</a></li>
+          <li><a href="admisiones.html">Admisiones</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Recursos</h4>
+        <ul>
+          <li><a href="documentos.html">Documentos</a></li>
+          <li><a href="servicios.html">Servicios</a></li>
+          <li><a href="extracurriculares.html">Extracurriculares</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="mailto:liceo.catolico@hotmail.com">liceo.catolico@hotmail.com</a></li>
+          <li><a href="tel:0959284565">0959 284 565</a></li>
+          <li><a href="informacion.html">Av. de las Américas e Isabel la Católica</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Unidad Educativa Liceo Americano Católico — UELAC</span>
+      <span>34 años educando para el futuro</span>
+    </div>
+  </div>
+</footer>
+<script src="script.js"></script>
+<script>
+document.querySelectorAll('.serv-card').forEach(function(card){
+  card.addEventListener('click', function(e){
+    if (e.target.closest('a')) return;
+    var wasSelected = card.classList.contains('selected');
+    document.querySelectorAll('.serv-card').forEach(function(c){ c.classList.remove('selected'); });
+    if (!wasSelected) card.classList.add('selected');
+  });
+});
+</script>
+</body>
+</html>
