@@ -36,7 +36,8 @@ if(contactForm){
 
 // innovation topic carousels: photos rotate every 2s; short videos play fully, then advance.
 // Each .feat-photo lists its files in data-files (inside images/<data-topic>/).
-// Items are added as soon as each one is ready, so a slow video never blocks the photos.
+// Loading is lazy: nothing downloads until the carousel is near the screen, photos load one
+// after another (the first appears fast) and each video only buffers when it is next in line.
 function loadInnovationMedia(src){
   return new Promise(function(resolve){
     const url=encodeURI(src);
@@ -44,12 +45,13 @@ function loadInnovationMedia(src){
     if(['mp4','mov','webm','m4v'].indexOf(ext)>-1){
       const v=document.createElement('video');
       v.muted=true; v.setAttribute('muted',''); v.setAttribute('playsinline','');
-      v.preload='auto';
+      v.preload='none';
       v.onerror=function(){ if(v.parentNode) v.parentNode.removeChild(v); resolve(null); };
       v.src=url;
       resolve(v);
     } else {
       const img=new Image();
+      img.decoding='async';
       img.onload=function(){resolve(img);};
       img.onerror=function(){resolve(null);};
       img.src=url;
@@ -70,15 +72,17 @@ document.querySelectorAll('.feat-photo[data-topic]').forEach(function(container)
   function media(){ return Array.prototype.slice.call(container.querySelectorAll('.feat-media')); }
   function show(cur){
     clearTimeout(timer);
-    media().forEach(function(m){ m.classList.remove('active'); if(m.tagName==='VIDEO') m.pause(); });
+    const list=media();
+    list.forEach(function(m){ m.classList.remove('active'); if(m.tagName==='VIDEO') m.pause(); });
     cur.classList.add('active');
+    const nxt=list[(list.indexOf(cur)+1)%list.length];
+    if(nxt && nxt!==cur && nxt.tagName==='VIDEO' && nxt.preload!=='auto') nxt.preload='auto';
     let advanced=false;
     function next(){
       if(advanced) return;
       advanced=true; clearTimeout(timer);
-      const list=media();
-      const k=list.indexOf(cur);
-      show(list[(k+1)%list.length] || cur);
+      const l=media();
+      show(l[(l.indexOf(cur)+1)%l.length] || cur);
     }
     if(cur.tagName==='VIDEO'){
       cur.currentTime=0;
@@ -89,16 +93,29 @@ document.querySelectorAll('.feat-photo[data-topic]').forEach(function(container)
       timer=setTimeout(next,2000);
     }
   }
-  files.forEach(function(f,idx){
-    loadInnovationMedia(folder+f).then(function(m){
-      if(!m) return;
-      m.classList.add('feat-media');
-      m.dataset.order=idx;
-      const after=media().filter(function(x){ return +x.dataset.order>idx; })[0];
-      container.insertBefore(m,after||null);
-      if(!started){ started=true; show(m); }
+  function add(m,idx){
+    m.classList.add('feat-media');
+    m.dataset.order=idx;
+    const after=media().filter(function(x){ return +x.dataset.order>idx; })[0];
+    container.insertBefore(m,after||null);
+    if(!started){ started=true; show(m); }
+  }
+  function loadAll(){
+    let chain=Promise.resolve();
+    files.forEach(function(f,idx){
+      chain=chain.then(function(){
+        return loadInnovationMedia(folder+f).then(function(m){ if(m) add(m,idx); });
+      });
     });
-  });
+  }
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(function(entries){
+      if(entries[0].isIntersecting){ io.disconnect(); loadAll(); }
+    },{rootMargin:'300px'});
+    io.observe(container);
+  } else {
+    loadAll();
+  }
 });
 
 // admissions steps: start the 1-2-3 highlight sequence when the steps scroll into view
