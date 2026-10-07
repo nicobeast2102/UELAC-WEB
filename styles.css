@@ -190,8 +190,8 @@ nav.mainnav a.current{color:var(--blue);background:var(--bg-soft);}
 .auth-card-v2 .auth-role{font-size:.85rem;color:var(--ink-soft);margin:2px 0 0;}
 
 /* oferta - level cards + accordion */
-.niveles-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;}
-.niveles-grid > details.level{flex:0 1 calc(33.333% - 15px);min-width:260px;}
+.niveles-grid{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:18px;}
+.niveles-grid > details.level{flex:0 1 clamp(190px,calc(16.666% - 15px),300px);min-width:0;}
 details.level{
   background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
   transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
@@ -206,10 +206,10 @@ details.level summary{cursor:pointer;list-style:none;display:block;}
 details.level summary::-webkit-details-marker{display:none;}
 .level-photo{width:100%;aspect-ratio:3/4;background:var(--bg-soft);}
 .level-photo img{width:100%;height:100%;object-fit:cover;}
-.level-summary-text{padding:18px 20px;font-weight:700;font-size:1.02rem;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.level-summary-text{padding:14px 14px;font-weight:700;font-size:1.02rem;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .level-toggle::after{content:"+";font-size:1.4rem;color:var(--blue);font-weight:700;}
 details.level[open] .level-toggle::after{content:"–";}
-details.level .level-body{padding:0 20px 24px;}
+details.level .level-body{padding:0 14px 18px;}
 .pilares{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px;}
 .pilar{background:var(--bg-soft);padding:14px 16px;border-radius:var(--radius-sm);font-size:.85rem;}
 
@@ -338,7 +338,7 @@ footer a:hover{color:var(--blue);}
   .hero-grid,.qs-grid,.info-grid,.doc-cols,.page-hero-split{grid-template-columns:1fr;}
   .hero-media{order:-1;}
   .feature-grid,.extra-grid,.feat-grid,.serv-grid,.steps{grid-template-columns:repeat(2,1fr);}
-  .niveles-grid > details.level{flex-basis:calc(50% - 11px);}
+  .niveles-grid > details.level{flex:0 1 calc(33.333% - 12px);}
   .authorities{grid-template-columns:repeat(2,1fr);}
   .authorities-row{grid-template-columns:repeat(3,1fr);}
   .uniforme-grid{grid-template-columns:repeat(3,1fr);}
@@ -348,7 +348,7 @@ footer a:hover{color:var(--blue);}
 }
 @media (max-width:600px){
   .feature-grid,.extra-grid,.feat-grid,.serv-grid,.steps,.authorities{grid-template-columns:1fr;}
-  .niveles-grid > details.level{flex-basis:100%;}
+  .niveles-grid > details.level{flex:0 1 calc(50% - 9px);}
   .authorities-row{grid-template-columns:repeat(2,1fr);}
   .uniforme-grid{grid-template-columns:repeat(2,1fr);}
   .lema-wide{font-size:1.2rem;padding:30px 20px;}
