@@ -34,31 +34,38 @@ if(contactForm){
   });
 }
 
-// innovation topic carousels: photos (jpg/png) rotate every 2s; short videos (mp4) play fully, then advance
-function loadInnovationMedia(topic,n){
-  const base='images/inovacion-'+topic+'-'+n;
+// innovation topic carousels: photos rotate every 2s; short videos play fully, then advance.
+// Each .feat-photo lists its files in data-files (inside images/<data-topic>/).
+function loadInnovationMedia(src){
   return new Promise(function(resolve){
-    function tryVideo(){
+    const url=encodeURI(src);
+    const ext=src.split('.').pop().toLowerCase();
+    if(['mp4','mov','webm','m4v'].indexOf(ext)>-1){
       const v=document.createElement('video');
       v.muted=true; v.setAttribute('muted',''); v.setAttribute('playsinline','');
-      v.preload='auto';
-      v.onloadeddata=function(){resolve(v);};
+      v.preload='metadata';
+      v.onloadedmetadata=function(){resolve(v);};
       v.onerror=function(){resolve(null);};
-      v.src=base+'.mp4';
-    }
-    function tryImg(ext,onFail){
+      v.src=url;
+    } else {
       const img=new Image();
       img.onload=function(){resolve(img);};
-      img.onerror=onFail;
-      img.src=base+'.'+ext;
+      img.onerror=function(){resolve(null);};
+      img.src=url;
     }
-    tryImg('jpg',function(){ tryImg('png',tryVideo); });
   });
 }
 
 document.querySelectorAll('.feat-photo[data-topic]').forEach(function(container){
-  const topic=container.dataset.topic;
-  Promise.all([1,2,3,4].map(function(n){return loadInnovationMedia(topic,n);})).then(function(list){
+  const folder='images/'+container.dataset.topic+'/';
+  let files;
+  if(container.dataset.files){
+    files=container.dataset.files.split(',').map(function(f){return f.trim();}).filter(Boolean);
+  } else {
+    files=[];
+    for(let n=1;n<=4;n++){ ['jpg','png','mp4','mov'].forEach(function(e){ files.push(n+'.'+e); }); }
+  }
+  Promise.all(files.map(function(f){return loadInnovationMedia(folder+f);})).then(function(list){
     const items=list.filter(Boolean);
     if(!items.length) return;
     items.forEach(function(m){ m.classList.add('feat-media'); container.appendChild(m); });
