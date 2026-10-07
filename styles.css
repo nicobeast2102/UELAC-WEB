@@ -261,7 +261,7 @@ details.level .level-body{padding:0 20px 24px;}
 /* experiencia */
 .feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:46px;}
 .feat{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;}
-.feat-photo{flex:0 0 calc(50% - 10px);aspect-ratio:1/1;position:relative;border-radius:var(--radius-sm);overflow:hidden;background:var(--bg-soft);}
+.feat-photo{flex:0 0 calc(50% - 10px);aspect-ratio:4/3;position:relative;border-radius:var(--radius-sm);overflow:hidden;background:var(--bg-soft);}
 .feat-photo .feat-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease;}
 .feat-photo .feat-media.active{opacity:1;}
 .feat-body{flex:1 1 180px;min-width:0;}
