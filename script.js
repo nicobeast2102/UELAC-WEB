@@ -36,6 +36,7 @@ if(contactForm){
 
 // innovation topic carousels: photos rotate every 2s; short videos play fully, then advance.
 // Each .feat-photo lists its files in data-files (inside images/<data-topic>/).
+// Items are added as soon as each one is ready, so a slow video never blocks the photos.
 function loadInnovationMedia(src){
   return new Promise(function(resolve){
     const url=encodeURI(src);
@@ -43,10 +44,10 @@ function loadInnovationMedia(src){
     if(['mp4','mov','webm','m4v'].indexOf(ext)>-1){
       const v=document.createElement('video');
       v.muted=true; v.setAttribute('muted',''); v.setAttribute('playsinline','');
-      v.preload='metadata';
-      v.onloadedmetadata=function(){resolve(v);};
-      v.onerror=function(){resolve(null);};
+      v.preload='auto';
+      v.onerror=function(){ if(v.parentNode) v.parentNode.removeChild(v); resolve(null); };
       v.src=url;
+      resolve(v);
     } else {
       const img=new Image();
       img.onload=function(){resolve(img);};
@@ -65,32 +66,38 @@ document.querySelectorAll('.feat-photo[data-topic]').forEach(function(container)
     files=[];
     for(let n=1;n<=4;n++){ ['jpg','png','mp4','mov'].forEach(function(e){ files.push(n+'.'+e); }); }
   }
-  Promise.all(files.map(function(f){return loadInnovationMedia(folder+f);})).then(function(list){
-    const items=list.filter(Boolean);
-    if(!items.length) return;
-    items.forEach(function(m){ m.classList.add('feat-media'); container.appendChild(m); });
-    if(items.length===1){
-      items[0].classList.add('active');
-      if(items[0].tagName==='VIDEO'){ items[0].loop=true; items[0].play().catch(function(){}); }
-      return;
+  let started=false, timer;
+  function media(){ return Array.prototype.slice.call(container.querySelectorAll('.feat-media')); }
+  function show(cur){
+    clearTimeout(timer);
+    media().forEach(function(m){ m.classList.remove('active'); if(m.tagName==='VIDEO') m.pause(); });
+    cur.classList.add('active');
+    let advanced=false;
+    function next(){
+      if(advanced) return;
+      advanced=true; clearTimeout(timer);
+      const list=media();
+      const k=list.indexOf(cur);
+      show(list[(k+1)%list.length] || cur);
     }
-    let timer;
-    function show(i){
-      items.forEach(function(m){ m.classList.remove('active'); if(m.tagName==='VIDEO') m.pause(); });
-      const cur=items[i];
-      cur.classList.add('active');
-      let advanced=false;
-      function next(){ if(advanced) return; advanced=true; clearTimeout(timer); show((i+1)%items.length); }
-      if(cur.tagName==='VIDEO'){
-        cur.currentTime=0;
-        cur.play().catch(function(){});
-        cur.onended=next;
-        timer=setTimeout(next,20000);
-      } else {
-        timer=setTimeout(next,2000);
-      }
+    if(cur.tagName==='VIDEO'){
+      cur.currentTime=0;
+      cur.play().catch(function(){});
+      cur.onended=next;
+      timer=setTimeout(next,20000);
+    } else {
+      timer=setTimeout(next,2000);
     }
-    show(0);
+  }
+  files.forEach(function(f,idx){
+    loadInnovationMedia(folder+f).then(function(m){
+      if(!m) return;
+      m.classList.add('feat-media');
+      m.dataset.order=idx;
+      const after=media().filter(function(x){ return +x.dataset.order>idx; })[0];
+      container.insertBefore(m,after||null);
+      if(!started){ started=true; show(m); }
+    });
   });
 });
 
