@@ -130,3 +130,12 @@ if(stepsEl){
     stepsEl.classList.add('in-view');
   }
 }
+
+// innovation cards: click keeps the zoom highlight on one card at a time (hover handled in CSS)
+document.querySelectorAll('.feat').forEach(function(card){
+  card.addEventListener('click',function(){
+    const was=card.classList.contains('selected');
+    document.querySelectorAll('.feat').forEach(function(c){ c.classList.remove('selected'); });
+    if(!was) card.classList.add('selected');
+  });
+});
