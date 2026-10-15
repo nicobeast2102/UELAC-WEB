@@ -139,3 +139,116 @@ document.querySelectorAll('.feat').forEach(function(card){
     if(!was) card.classList.add('selected');
   });
 });
+
+// ---------------------------------------------------------------------
+// Designer pass: scroll progress, floating WhatsApp, back-to-top,
+// reveal-on-scroll, animated counters, educational path, document search
+// ---------------------------------------------------------------------
+(function(){
+  const bar=document.createElement('div');
+  bar.className='scroll-progress'; bar.innerHTML='<span></span>';
+  document.body.appendChild(bar);
+  const fill=bar.firstChild;
+
+  const top=document.createElement('button');
+  top.className='to-top'; top.setAttribute('aria-label','Volver arriba');
+  top.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+  top.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+  document.body.appendChild(top);
+
+  const wa=document.createElement('a');
+  wa.className='fab-wa';
+  wa.href='https://wa.me/593959284565?text=%F0%9F%91%8B%20Hola%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20su%20escuelita%20%F0%9F%8F%AB';
+  wa.target='_blank'; wa.rel='noopener'; wa.setAttribute('aria-label','Escríbenos por WhatsApp');
+  wa.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.26-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.55-3.7 8.24-8.25 8.24Zm4.52-6.17c-.25-.12-1.46-.72-1.68-.8-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.96-.14.16-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42h-.48c-.16 0-.43.06-.65.3-.23.24-.86.84-.86 2.04 0 1.2.88 2.36 1 2.52.12.16 1.73 2.64 4.2 3.7.59.25 1.05.4 1.4.52.59.19 1.13.16 1.55.1.47-.07 1.46-.6 1.67-1.17.2-.58.2-1.07.14-1.17-.06-.1-.22-.16-.47-.28Z"/></svg>';
+  document.body.appendChild(wa);
+
+  function onScroll(){
+    const h=document.documentElement;
+    const max=h.scrollHeight-h.clientHeight;
+    fill.style.transform='scaleX('+(max>0?h.scrollTop/max:0)+')';
+    top.classList.toggle('show',h.scrollTop>600);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+
+// reveal-on-scroll (soft fade/slide-up with a small stagger between siblings)
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const sel='.page-hero > *,.section-head,.feature-card,.mv-card,.value-chip,.auth-card-v2,.cta-band,.stats-band,.feat,.serv-card,.extra-card,.uniforme-item,details.level,.faq-item,.bento-tile,.horario-wrap,.doc-cols > *,.info-grid > *,.lema-wide,.gal-head,.marquee';
+  const els=document.querySelectorAll(sel);
+  const io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      const el=e.target;
+      io.unobserve(el);
+      el.classList.remove('reveal');
+      el.classList.add('reveal-in');
+      el.addEventListener('animationend',function(ev){ if(ev.target===el) el.classList.remove('reveal-in'); });
+    });
+  },{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+  els.forEach(function(el){
+    const sibs=Array.prototype.filter.call(el.parentNode.children,function(c){ return c.matches(sel); });
+    el.style.setProperty('--d',(Math.min(sibs.indexOf(el),6)*0.08)+'s');
+    el.classList.add('reveal');
+    io.observe(el);
+  });
+})();
+
+// animated counters: [data-count] counts up from 0 when it scrolls into view
+(function(){
+  const nums=document.querySelectorAll('[data-count]');
+  if(!nums.length) return;
+  function show(el,v){ el.textContent=Math.round(v)+(el.dataset.suffix||''); }
+  const reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce || !('IntersectionObserver' in window)){ nums.forEach(function(el){ show(el,+el.dataset.count); }); return; }
+  nums.forEach(function(el){ show(el,0); });
+  const io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      io.unobserve(e.target);
+      const el=e.target, end=+el.dataset.count, t0=performance.now(), dur=1800;
+      (function tick(t){
+        const p=Math.min((t-t0)/dur,1);
+        show(el,end*(1-Math.pow(1-p,3)));
+        if(p<1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  },{threshold:0.4});
+  nums.forEach(function(el){ io.observe(el); });
+})();
+
+// educational path: line draws and levels pop in order when it scrolls into view
+(function(){
+  const path=document.querySelector('.path');
+  if(!path) return;
+  if(!('IntersectionObserver' in window)){ return; }
+  path.classList.add('armed');
+  const io=new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting){ path.classList.add('in-view'); io.disconnect(); }
+  },{threshold:0.35});
+  io.observe(path);
+})();
+
+// document search: filters both lists as you type (ignores accents and capitals)
+(function(){
+  const input=document.getElementById('docSearch');
+  if(!input) return;
+  const items=document.querySelectorAll('.doc-list li,.doc-side li');
+  const count=document.getElementById('docCount');
+  const empty=document.getElementById('docEmpty');
+  function norm(t){ return t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
+  input.addEventListener('input',function(){
+    const q=norm(input.value.trim());
+    let shown=0;
+    items.forEach(function(li){
+      const ok=!q || norm(li.textContent).indexOf(q)>-1;
+      li.style.display=ok?'':'none';
+      if(ok) shown++;
+    });
+    count.textContent=q?(shown+' resultado'+(shown===1?'':'s')):'';
+    empty.style.display=shown?'none':'block';
+  });
+})();

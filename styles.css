@@ -490,3 +490,164 @@ html.dark-mode footer::before{background-image:url("data:image/svg+xml,%3Csvg xm
   100%{-webkit-mask-position:100% 0,0% 0;mask-position:100% 0,0% 0;}
 }
 @media (prefers-reduced-motion:reduce){footer::before{animation:none;}}
+
+/* =====================================================================
+   TEMPLATES & MOTION (designer pass): marquee, bento, counters, path,
+   FAQ, values, doc search, reveal-on-scroll, floating widgets
+   ===================================================================== */
+body{animation:page-in .5s ease backwards;}
+@keyframes page-in{from{opacity:0;}to{opacity:1;}}
+
+/* --- scroll reveal (classes are added by script.js, so nothing hides if JS fails) --- */
+.reveal{opacity:0;transform:translateY(26px);}
+.reveal-in{animation:reveal-up .75s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:var(--d,0s);}
+@keyframes reveal-up{from{opacity:0;transform:translateY(26px);}to{opacity:1;transform:none;}}
+
+/* --- scroll progress, floating WhatsApp, back to top --- */
+.scroll-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:300;pointer-events:none;}
+.scroll-progress span{display:block;height:100%;width:100%;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,var(--blue),var(--yellow));}
+.fab-wa{position:fixed;right:20px;bottom:20px;z-index:150;width:58px;height:58px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s ease;}
+.fab-wa:hover{transform:scale(1.1);}
+.fab-wa svg{width:30px;height:30px;}
+.fab-wa::before{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #25D366;animation:fab-ring 2.4s ease-out infinite;}
+@keyframes fab-ring{0%{transform:scale(1);opacity:.7;}100%{transform:scale(1.7);opacity:0;}}
+.to-top{position:fixed;right:27px;bottom:92px;z-index:150;width:44px;height:44px;border-radius:50%;border:none;background:var(--blue);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(27,63,209,.35);opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .3s,transform .3s,visibility .3s,background .2s;}
+.to-top.show{opacity:1;visibility:visible;transform:none;}
+.to-top:hover{background:var(--blue-dark);}
+.to-top svg{width:20px;height:20px;}
+
+/* --- values marquee (home) --- */
+.marquee{background:var(--blue);color:#fff;overflow:hidden;display:flex;padding:16px 0;user-select:none;}
+.marquee-group{flex:none;min-width:100%;display:flex;align-items:center;justify-content:space-around;gap:36px;padding-right:36px;animation:marquee 30s linear infinite;}
+.marquee:hover .marquee-group{animation-play-state:paused;}
+.marquee span{font-weight:700;font-size:1.1rem;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;}
+.marquee i{color:var(--yellow);font-style:normal;font-size:1rem;}
+@keyframes marquee{to{transform:translateX(-100%);}}
+
+/* --- bento "Explora el Liceo" (home) --- */
+.bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:210px;gap:18px;}
+.bento-tile{position:relative;isolation:isolate;border-radius:var(--radius);overflow:hidden;display:flex;align-items:flex-end;text-decoration:none;color:#fff;background:var(--g,linear-gradient(135deg,#1B3FD1,#3F63E0));box-shadow:0 10px 26px rgba(18,35,91,.12);transition:box-shadow .3s ease;}
+.bento-tile.t-big{grid-column:span 2;grid-row:span 2;}
+.bento-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform .7s ease;}
+.bento-tile::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,rgba(10,20,60,.82) 0%,rgba(10,20,60,.1) 62%,transparent 100%);}
+.bento-tile:hover{box-shadow:0 22px 44px rgba(27,63,209,.3);}
+.bento-tile:hover img{transform:scale(1.1);}
+.bento-body{padding:20px 22px;position:relative;}
+.bento-tag{display:inline-block;background:var(--yellow);color:var(--blue-dark);font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;padding:4px 10px;border-radius:99px;}
+.bento-tile h3{color:#fff;font-size:1.05rem;margin:10px 0 4px;}
+.bento-tile.t-big h3{font-size:1.6rem;}
+.bento-tile p{color:#E3E8FA;font-size:.9rem;margin:0;}
+.bento-tile .arrow{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;background:#fff;color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:800;transition:transform .35s ease,background .25s ease;}
+.bento-tile:hover .arrow{transform:rotate(-45deg) scale(1.12);background:var(--yellow);}
+
+/* --- stats band with 4 counters + floating cap in CTA --- */
+.stats-band.stats-4{grid-template-columns:repeat(4,1fr);}
+.stats-band + .cta-band{margin-top:28px;}
+.cta-emoji{animation:cap-float 3.2s ease-in-out infinite;}
+@keyframes cap-float{0%,100%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-10px) rotate(4deg);}}
+
+/* --- values chips (quienes somos) --- */
+.values-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:18px;}
+.value-chip{position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px 14px;text-align:center;transition:transform .25s ease,box-shadow .25s ease;}
+.value-chip .ic{display:block;font-size:2rem;margin-bottom:8px;transition:transform .35s ease;}
+.value-chip strong{display:block;color:var(--ink);font-size:1.05rem;}
+.value-chip::after{content:"";position:absolute;left:0;bottom:0;height:4px;width:0;background:linear-gradient(90deg,var(--blue),var(--yellow));transition:width .45s ease;}
+.value-chip:hover{transform:translateY(-6px);box-shadow:0 16px 34px rgba(27,63,209,.16);}
+.value-chip:hover::after{width:100%;}
+.value-chip:hover .ic{transform:scale(1.25) rotate(-8deg);}
+
+/* --- educational path (oferta academica) --- */
+.path{position:relative;margin:14px 0 54px;}
+.path-line{position:absolute;top:22px;left:calc(100%/12);right:calc(100%/12);height:4px;background:var(--line);border-radius:4px;overflow:hidden;}
+.path-fill{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--blue),var(--yellow));}
+.path-nodes{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(6,1fr);position:relative;}
+.path-nodes li{text-align:center;padding:0 8px;}
+.path-nodes .dot{width:46px;height:46px;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;border:4px solid #fff;box-shadow:0 6px 16px rgba(27,63,209,.3);}
+.path-nodes li.grad .dot{background:var(--yellow);color:var(--blue-dark);font-size:1.3rem;}
+.path-nodes strong{display:block;color:var(--ink);font-size:.95rem;}
+.path-nodes small{display:block;color:var(--ink-soft);font-size:.8rem;line-height:1.35;margin-top:2px;}
+.path.armed .path-fill{width:0;transition:width 2.6s cubic-bezier(.4,0,.2,1);}
+.path.armed .path-nodes li{opacity:0;transform:translateY(14px) scale(.9);}
+.path.armed.in-view .path-fill{width:100%;}
+.path.armed.in-view .path-nodes li{animation:path-pop .6s cubic-bezier(.2,.9,.3,1.3) forwards;animation-delay:calc(var(--i) * .42s);}
+.path.armed.in-view .path-nodes li.grad .dot{animation:grad-glow 2.4s ease-in-out 2.8s infinite;}
+@keyframes path-pop{to{opacity:1;transform:none;}}
+@keyframes grad-glow{0%,100%{box-shadow:0 6px 16px rgba(244,180,0,.4);}50%{box-shadow:0 0 0 10px rgba(244,180,0,.18),0 6px 22px rgba(244,180,0,.7);}}
+
+/* --- FAQ (admisiones) --- */
+.faq{max-width:900px;margin:64px auto 0;}
+.faq .section-head{margin-bottom:28px;}
+details.faq-item{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);margin-bottom:12px;overflow:hidden;transition:border-color .25s ease,box-shadow .25s ease;}
+details.faq-item:hover{border-color:var(--blue);}
+details.faq-item[open]{border-color:var(--blue);box-shadow:0 12px 30px rgba(27,63,209,.12);}
+details.faq-item summary{cursor:pointer;list-style:none;padding:18px 22px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:16px;}
+details.faq-item summary::-webkit-details-marker{display:none;}
+details.faq-item summary::after{content:"+";color:var(--blue);font-size:1.6rem;line-height:1;transition:transform .3s ease;}
+details.faq-item[open] summary::after{transform:rotate(45deg);}
+.faq-body{padding:0 22px 20px;color:var(--ink-soft);}
+.faq-body p{margin:0;color:var(--ink-soft);}
+details.faq-item[open] .faq-body{animation:faq-in .35s ease;}
+@keyframes faq-in{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:none;}}
+
+/* --- document search (documentos) --- */
+.doc-search{display:flex;align-items:center;gap:14px;margin-bottom:26px;flex-wrap:wrap;}
+.doc-search input{flex:1 1 300px;max-width:560px;padding:14px 20px 14px 48px;border:1.5px solid var(--line);border-radius:99px;font:inherit;color:var(--ink);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%235B5F76' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E") no-repeat 18px center;}
+.doc-search input:focus{outline:2px solid var(--blue);outline-offset:1px;}
+#docCount{color:var(--ink-soft);font-size:.9rem;}
+.doc-empty{display:none;color:var(--ink-soft);margin:0 0 18px;}
+
+/* --- extracurriculares + map button --- */
+.extra-card img{transition:transform .7s ease;}
+.extra-card:hover img{transform:scale(1.1);}
+.extra-card h3{transition:transform .3s ease;}
+.extra-card:hover h3{transform:translateY(-6px);}
+.map-btn{margin-bottom:20px;}
+
+/* --- responsive --- */
+@media (max-width:1000px){
+  .bento{grid-template-columns:repeat(2,1fr);}
+  .bento-tile.t-big{grid-column:span 2;grid-row:span 1;}
+  .values-row{grid-template-columns:repeat(2,1fr);}
+  .stats-band.stats-4{grid-template-columns:repeat(2,1fr);gap:28px;}
+}
+@media (max-width:720px){
+  .path-line{top:22px;bottom:22px;left:22px;right:auto;width:4px;height:auto;}
+  .path-fill{width:100%;height:100%;}
+  .path.armed .path-fill{width:100%;height:0;transition:height 2.6s cubic-bezier(.4,0,.2,1);}
+  .path.armed.in-view .path-fill{height:100%;}
+  .path-nodes{grid-template-columns:1fr;gap:22px;}
+  .path-nodes li{display:grid;grid-template-columns:46px 1fr;column-gap:16px;row-gap:0;text-align:left;align-items:center;padding:0;}
+  .path-nodes .dot{grid-row:span 2;margin:0;}
+}
+@media (max-width:560px){
+  .bento{grid-template-columns:1fr;}
+  .bento-tile.t-big{grid-column:span 1;}
+  .stats-band.stats-4{grid-template-columns:1fr;}
+  .fab-wa{right:14px;bottom:14px;width:52px;height:52px;}
+  .to-top{right:20px;bottom:78px;}
+}
+
+/* --- dark mode for the new pieces --- */
+html.dark-mode .value-chip{background:var(--dm-card);border-color:var(--dm-line);}
+html.dark-mode .value-chip strong{color:var(--dm-ink);}
+html.dark-mode .value-chip:hover{box-shadow:0 16px 34px rgba(0,0,0,.5);}
+html.dark-mode .path-line{background:var(--dm-line);}
+html.dark-mode .path-nodes .dot{border-color:var(--dm-bg-soft);}
+html.dark-mode .path-nodes strong{color:var(--dm-ink);}
+html.dark-mode .path-nodes small{color:var(--dm-ink-soft);}
+html.dark-mode details.faq-item{background:var(--dm-card);border-color:var(--dm-line);}
+html.dark-mode details.faq-item:hover,html.dark-mode details.faq-item[open]{border-color:var(--dm-blue);}
+html.dark-mode details.faq-item summary{color:var(--dm-ink);}
+html.dark-mode details.faq-item summary::after{color:var(--dm-blue);}
+html.dark-mode .faq-body,html.dark-mode .faq-body p{color:var(--dm-ink-soft);}
+html.dark-mode .doc-search input{background-color:var(--dm-card);border-color:var(--dm-line);color:var(--dm-ink);}
+html.dark-mode #docCount,html.dark-mode .doc-empty{color:var(--dm-ink-soft);}
+html.dark-mode .bento-tile{box-shadow:0 10px 26px rgba(0,0,0,.4);}
+
+@media (prefers-reduced-motion:reduce){
+  body{animation:none;}
+  .reveal{opacity:1;transform:none;}
+  .reveal-in,.marquee-group,.cta-emoji,.fab-wa::before,.path.armed.in-view .path-nodes li,.path.armed.in-view .path-nodes li.grad .dot{animation:none;}
+  .path.armed .path-nodes li{opacity:1;transform:none;}
+  .path.armed .path-fill{width:100%;height:100%;transition:none;}
+}
