@@ -34,136 +34,56 @@ if(contactForm){
   });
 }
 
-// innovation topic carousels: photos rotate every 2s; short videos play fully, then advance.
-// Each .feat-photo lists its files in data-files (inside images/<data-topic>/).
-// Phones only autoplay a muted video that is actually visible, so: items are always fully opaque
-// (the active one is simply stacked on top), nothing starts until the carousel is on screen,
-// and it pauses when scrolled away.
-function loadInnovationMedia(src){
-  return new Promise(function(resolve){
-    const url=encodeURI(src);
-    const ext=src.split('.').pop().toLowerCase();
-    if(['mp4','mov','webm','m4v'].indexOf(ext)>-1){
-      const v=document.createElement('video');
-      v.muted=true; v.defaultMuted=true; v.setAttribute('muted','');
-      v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
-      v.setAttribute('disablepictureinpicture',''); v.setAttribute('disableremoteplayback','');
-      v.preload='metadata';
-      v.onerror=function(){ if(v.parentNode) v.parentNode.removeChild(v); resolve(null); };
-      v.src=url+'#t=0.1';
-      resolve(v);
-    } else {
-      const img=new Image();
-      img.decoding='async';
-      img.onload=function(){resolve(img);};
-      img.onerror=function(){resolve(null);};
-      img.src=url;
+// innovation topic carousels: the photos and videos are real elements written in the page
+// (videos use autoplay + muted + loop + playsinline, like the admissions video), so the phone
+// starts them by itself. This script only decides which one is on top:
+// photos stay 2 s, a video stays for one full play-through.
+document.querySelectorAll('.feat-photo').forEach(function(container){
+  let timer, currentEl=null, inView=false;
+  function items(){ return Array.prototype.slice.call(container.querySelectorAll('.feat-media')); }
+  function schedule(el){
+    clearTimeout(timer);
+    if(items().length<2) return;
+    let wait=2000;
+    if(el.tagName==='VIDEO'){
+      const d=el.duration;
+      wait=(isFinite(d) && d>0) ? Math.min(d*1000+200,30000) : 6000;
     }
-  });
-}
-
-document.querySelectorAll('.feat-photo[data-topic]').forEach(function(container){
-  const folder='images/'+container.dataset.topic+'/';
-  let files;
-  if(container.dataset.files){
-    files=container.dataset.files.split(',').map(function(f){return f.trim();}).filter(Boolean);
-  } else {
-    files=[];
-    for(let n=1;n<=4;n++){ ['jpg','png','mp4','mov'].forEach(function(e){ files.push(n+'.'+e); }); }
+    timer=setTimeout(function(){
+      const list=items();
+      const k=list.indexOf(el);
+      show(list[(k+1)%list.length] || list[0]);
+    },wait);
   }
-  let inView=false, current=null, timer, stall;
-  function media(){ return Array.prototype.slice.call(container.querySelectorAll('.feat-media')); }
-  function removeTap(){ const b=container.querySelector('.feat-play'); if(b) b.remove(); }
-  function needTap(){
-    if(container.querySelector('.feat-play')) return;
-    const b=document.createElement('button');
-    b.type='button'; b.className='feat-play'; b.setAttribute('aria-label','Reproducir video'); b.textContent='▶';
-    b.addEventListener('click',function(ev){
-      ev.stopPropagation();
-      const act=container.querySelector('.feat-media.active');
-      if(act && act.tagName==='VIDEO'){ const p=act.play(); if(p && p.then) p.then(removeTap).catch(function(){}); }
-      else removeTap();
-    });
-    container.appendChild(b);
-  }
-  function playVideo(v){
-    const p=v.play();
-    if(p && p.then){ p.then(removeTap).catch(function(){ needTap(); }); }
-  }
-  function stop(){
-    clearTimeout(timer); clearTimeout(stall);
-    media().forEach(function(m){ if(m.tagName==='VIDEO') m.pause(); });
-  }
-  function show(cur){
-    clearTimeout(timer); clearTimeout(stall);
-    current=cur;
-    if(cur.tagName!=='VIDEO') removeTap();
-    const list=media();
-    list.forEach(function(m){ m.classList.remove('active'); if(m!==cur && m.tagName==='VIDEO') m.pause(); });
-    cur.classList.add('active');
-    const nxt=list[(list.indexOf(cur)+1)%list.length];
-    if(nxt && nxt!==cur && nxt.tagName==='VIDEO') nxt.preload='auto';
-    let advanced=false;
-    function next(){
-      if(advanced) return;
-      advanced=true; clearTimeout(timer); clearTimeout(stall);
-      const l=media();
-      show(l[(l.indexOf(cur)+1)%l.length] || cur);
+  function show(el){
+    if(!el) return;
+    currentEl=el;
+    items().forEach(function(m){ m.classList.toggle('active',m===el); });
+    if(el.tagName==='VIDEO'){
+      try{ el.currentTime=0; }catch(e){}
+      if(!isFinite(el.duration)){
+        el.addEventListener('loadedmetadata',function(){ if(currentEl===el && inView) schedule(el); },{once:true});
+      }
     }
-    if(cur.tagName==='VIDEO'){
-      cur.preload='auto';
-      cur.currentTime=0;
-      playVideo(cur);
-      cur.onended=next;
-      timer=setTimeout(next,20000);
-      stall=setTimeout(function(){ if(cur.readyState<3 && media().length>1 && !container.querySelector('.feat-play')) next(); },9000);
-    } else {
-      timer=setTimeout(next,2000);
-    }
+    schedule(el);
   }
-  document.addEventListener('touchend',function(){
-    const act=container.querySelector('.feat-media.active');
-    if(act && act.tagName==='VIDEO' && act.paused && inView) playVideo(act);
-  },{once:true,passive:true});
-  function add(m,idx){
-    m.classList.add('feat-media');
-    m.dataset.order=idx;
-    const after=media().filter(function(x){ return +x.dataset.order>idx; })[0];
-    container.insertBefore(m,after||null);
-    container.classList.remove('loading');
-    if(inView && !current) show(m);
-  }
-  function loadAll(){
-    container.classList.add('loading');
-    setTimeout(function(){ container.classList.remove('loading'); },15000);
-    let chain=Promise.resolve();
-    files.forEach(function(f,idx){
-      chain=chain.then(function(){
-        return loadInnovationMedia(folder+f).then(function(m){ if(m) add(m,idx); });
-      });
-    });
+  function begin(){
+    const list=items();
+    if(!list.length) return;
+    show(currentEl && list.indexOf(currentEl)>-1 ? currentEl : list[0]);
   }
   if('IntersectionObserver' in window){
-    // 1) start downloading shortly before it reaches the screen
-    const pre=new IntersectionObserver(function(entries){
-      if(entries[0].isIntersecting){ pre.disconnect(); loadAll(); }
-    },{rootMargin:'300px'});
-    pre.observe(container);
-    // 2) play only while it is really on screen
-    const vis=new IntersectionObserver(function(entries){
+    new IntersectionObserver(function(entries){
       inView=entries[0].isIntersecting;
-      if(inView){
-        const l=media();
-        if(l.length) show(current && l.indexOf(current)>-1 ? current : l[0]);
-      } else {
-        stop();
-      }
-    },{threshold:0.3});
-    vis.observe(container);
+      if(inView) begin(); else clearTimeout(timer);
+    },{threshold:0.3}).observe(container);
   } else {
-    inView=true;
-    loadAll();
+    inView=true; begin();
   }
+  // same safety net as the admissions video: if the phone held the videos back, the first touch starts them
+  function kick(){ container.querySelectorAll('video').forEach(function(v){ const p=v.play(); if(p && p.catch) p.catch(function(){}); }); }
+  document.addEventListener('touchstart',kick,{once:true,passive:true});
+  document.addEventListener('click',kick,{once:true});
 });
 
 // admissions steps: start the 1-2-3 highlight sequence when the steps scroll into view
