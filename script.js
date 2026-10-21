@@ -220,3 +220,27 @@ document.querySelectorAll('.feat').forEach(function(card){
     empty.style.display=shown?'none':'block';
   });
 })();
+
+// home "Explora el Liceo": each tile fades through its own set of photos
+(function(){
+  document.querySelectorAll('.bento-tile').forEach(function(tile,n){
+    function imgs(){ return Array.prototype.slice.call(tile.querySelectorAll('.tile-img')); }
+    let timer, starter;
+    function step(){
+      const list=imgs();
+      if(!list.length) return;
+      const k=list.findIndex(function(i){ return i.classList.contains('active'); });
+      list.forEach(function(i){ i.classList.remove('active'); });
+      list[(k+1)%list.length].classList.add('active');
+    }
+    function start(){
+      stop();
+      if(imgs().length<2) return;
+      starter=setTimeout(function(){ timer=setInterval(step,3200); },n*600);
+    }
+    function stop(){ clearTimeout(starter); clearInterval(timer); }
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(entries){ if(entries[0].isIntersecting) start(); else stop(); },{threshold:0.2}).observe(tile);
+    } else { start(); }
+  });
+})();
