@@ -36,8 +36,9 @@ if(contactForm){
 
 // innovation topic carousels: photos rotate every 2s; short videos play fully, then advance.
 // Each .feat-photo lists its files in data-files (inside images/<data-topic>/).
-// Loading is lazy: nothing downloads until the carousel is near the screen, photos load one
-// after another (the first appears fast) and each video only buffers when it is next in line.
+// Phones only autoplay a muted video that is actually visible, so: items are always fully opaque
+// (the active one is simply stacked on top), nothing starts until the carousel is on screen,
+// and it pauses when scrolled away.
 function loadInnovationMedia(src){
   return new Promise(function(resolve){
     const url=encodeURI(src);
@@ -46,7 +47,7 @@ function loadInnovationMedia(src){
       const v=document.createElement('video');
       v.muted=true; v.defaultMuted=true; v.setAttribute('muted','');
       v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
-      v.setAttribute('disablepictureinpicture','');
+      v.setAttribute('disablepictureinpicture',''); v.setAttribute('disableremoteplayback','');
       v.preload='metadata';
       v.onerror=function(){ if(v.parentNode) v.parentNode.removeChild(v); resolve(null); };
       v.src=url+'#t=0.1';
@@ -70,7 +71,7 @@ document.querySelectorAll('.feat-photo[data-topic]').forEach(function(container)
     files=[];
     for(let n=1;n<=4;n++){ ['jpg','png','mp4','mov'].forEach(function(e){ files.push(n+'.'+e); }); }
   }
-  let started=false, timer, stall;
+  let inView=false, current=null, timer, stall;
   function media(){ return Array.prototype.slice.call(container.querySelectorAll('.feat-media')); }
   function removeTap(){ const b=container.querySelector('.feat-play'); if(b) b.remove(); }
   function needTap(){
@@ -89,22 +90,28 @@ document.querySelectorAll('.feat-photo[data-topic]').forEach(function(container)
     const p=v.play();
     if(p && p.then){ p.then(removeTap).catch(function(){ needTap(); }); }
   }
+  function stop(){
+    clearTimeout(timer); clearTimeout(stall);
+    media().forEach(function(m){ if(m.tagName==='VIDEO') m.pause(); });
+  }
   function show(cur){
     clearTimeout(timer); clearTimeout(stall);
+    current=cur;
     if(cur.tagName!=='VIDEO') removeTap();
     const list=media();
-    list.forEach(function(m){ m.classList.remove('active'); if(m.tagName==='VIDEO') m.pause(); });
+    list.forEach(function(m){ m.classList.remove('active'); if(m!==cur && m.tagName==='VIDEO') m.pause(); });
     cur.classList.add('active');
     const nxt=list[(list.indexOf(cur)+1)%list.length];
-    if(nxt && nxt!==cur && nxt.tagName==='VIDEO' && nxt.preload!=='auto') nxt.preload='auto';
+    if(nxt && nxt!==cur && nxt.tagName==='VIDEO') nxt.preload='auto';
     let advanced=false;
     function next(){
       if(advanced) return;
-      advanced=true; clearTimeout(timer);
+      advanced=true; clearTimeout(timer); clearTimeout(stall);
       const l=media();
       show(l[(l.indexOf(cur)+1)%l.length] || cur);
     }
     if(cur.tagName==='VIDEO'){
+      cur.preload='auto';
       cur.currentTime=0;
       playVideo(cur);
       cur.onended=next;
@@ -116,16 +123,19 @@ document.querySelectorAll('.feat-photo[data-topic]').forEach(function(container)
   }
   document.addEventListener('touchend',function(){
     const act=container.querySelector('.feat-media.active');
-    if(act && act.tagName==='VIDEO' && act.paused) playVideo(act);
+    if(act && act.tagName==='VIDEO' && act.paused && inView) playVideo(act);
   },{once:true,passive:true});
   function add(m,idx){
     m.classList.add('feat-media');
     m.dataset.order=idx;
     const after=media().filter(function(x){ return +x.dataset.order>idx; })[0];
     container.insertBefore(m,after||null);
-    if(!started){ started=true; show(m); }
+    container.classList.remove('loading');
+    if(inView && !current) show(m);
   }
   function loadAll(){
+    container.classList.add('loading');
+    setTimeout(function(){ container.classList.remove('loading'); },15000);
     let chain=Promise.resolve();
     files.forEach(function(f,idx){
       chain=chain.then(function(){
@@ -134,11 +144,24 @@ document.querySelectorAll('.feat-photo[data-topic]').forEach(function(container)
     });
   }
   if('IntersectionObserver' in window){
-    const io=new IntersectionObserver(function(entries){
-      if(entries[0].isIntersecting){ io.disconnect(); loadAll(); }
+    // 1) start downloading shortly before it reaches the screen
+    const pre=new IntersectionObserver(function(entries){
+      if(entries[0].isIntersecting){ pre.disconnect(); loadAll(); }
     },{rootMargin:'300px'});
-    io.observe(container);
+    pre.observe(container);
+    // 2) play only while it is really on screen
+    const vis=new IntersectionObserver(function(entries){
+      inView=entries[0].isIntersecting;
+      if(inView){
+        const l=media();
+        if(l.length) show(current && l.indexOf(current)>-1 ? current : l[0]);
+      } else {
+        stop();
+      }
+    },{threshold:0.3});
+    vis.observe(container);
   } else {
+    inView=true;
     loadAll();
   }
 });
@@ -202,7 +225,7 @@ document.querySelectorAll('.feat').forEach(function(card){
 (function(){
   if(!('IntersectionObserver' in window)) return;
   if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const sel='.page-hero > *,.section-head,.feature-card,.mv-card,.value-chip,.auth-card-v2,.cta-band,.stats-band,.feat,.serv-card,.extra-card,.uniforme-item,details.level,.faq-item,.bento-tile,.horario-wrap,.doc-cols > *,.info-grid > *,.lema-wide,.gal-head,.marquee';
+  const sel='.page-hero > *,.section-head,.feature-card,.mv-card,.value-chip,.auth-card-v2,.stats-band,.serv-card,.extra-card,.uniforme-item,details.level,.faq-item,.bento-tile,.horario-wrap,.doc-cols > *,.info-grid > *,.lema-wide,.gal-head,.marquee';
   const els=document.querySelectorAll(sel);
   const io=new IntersectionObserver(function(entries){
     entries.forEach(function(e){
