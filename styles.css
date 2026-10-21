@@ -651,3 +651,7 @@ html.dark-mode .bento-tile{box-shadow:0 10px 26px rgba(0,0,0,.4);}
   .path.armed .path-nodes li{opacity:1;transform:none;}
   .path.armed .path-fill{width:100%;height:100%;transition:none;}
 }
+
+/* tap-to-play fallback for phones that block autoplay */
+.feat-play{position:absolute;left:50%;top:50%;z-index:3;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;border:none;background:rgba(255,255,255,.92);color:var(--blue);font-size:1.5rem;padding-left:5px;cursor:pointer;box-shadow:0 10px 26px rgba(18,35,91,.35);display:flex;align-items:center;justify-content:center;}
+.feat-play:active{transform:translate(-50%,-50%) scale(.94);}

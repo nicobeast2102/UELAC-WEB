@@ -75,7 +75,7 @@
       <div class="cta-icon">
         <span class="cta-icon-fallback">🤍</span>
         <video autoplay loop muted playsinline webkit-playsinline preload="auto" onerror="this.style.display='none'" id="ctaVideo">
-          <source src="images/cta-animacion.mp4" type="video/mp4">
+          <source src="images/cta-animacion.mp4#t=0.1" type="video/mp4">
         </video>
       </div>
     </div>
@@ -145,7 +145,8 @@
   v.muted = true;
   var tryPlay = function(){ var p = v.play(); if (p !== undefined) { p.catch(function(){}); } };
   tryPlay();
-  document.addEventListener('touchstart', tryPlay, {once:true});
+  document.addEventListener('touchend', tryPlay, {once:true});
+  v.addEventListener('click', tryPlay);
   document.addEventListener('click', tryPlay, {once:true});
 })();
 </script>

@@ -44,10 +44,12 @@ function loadInnovationMedia(src){
     const ext=src.split('.').pop().toLowerCase();
     if(['mp4','mov','webm','m4v'].indexOf(ext)>-1){
       const v=document.createElement('video');
-      v.muted=true; v.setAttribute('muted',''); v.setAttribute('playsinline','');
-      v.preload='none';
+      v.muted=true; v.defaultMuted=true; v.setAttribute('muted','');
+      v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+      v.setAttribute('disablepictureinpicture','');
+      v.preload='metadata';
       v.onerror=function(){ if(v.parentNode) v.parentNode.removeChild(v); resolve(null); };
-      v.src=url;
+      v.src=url+'#t=0.1';
       resolve(v);
     } else {
       const img=new Image();
@@ -68,10 +70,28 @@ document.querySelectorAll('.feat-photo[data-topic]').forEach(function(container)
     files=[];
     for(let n=1;n<=4;n++){ ['jpg','png','mp4','mov'].forEach(function(e){ files.push(n+'.'+e); }); }
   }
-  let started=false, timer;
+  let started=false, timer, stall;
   function media(){ return Array.prototype.slice.call(container.querySelectorAll('.feat-media')); }
+  function removeTap(){ const b=container.querySelector('.feat-play'); if(b) b.remove(); }
+  function needTap(){
+    if(container.querySelector('.feat-play')) return;
+    const b=document.createElement('button');
+    b.type='button'; b.className='feat-play'; b.setAttribute('aria-label','Reproducir video'); b.textContent='▶';
+    b.addEventListener('click',function(ev){
+      ev.stopPropagation();
+      const act=container.querySelector('.feat-media.active');
+      if(act && act.tagName==='VIDEO'){ const p=act.play(); if(p && p.then) p.then(removeTap).catch(function(){}); }
+      else removeTap();
+    });
+    container.appendChild(b);
+  }
+  function playVideo(v){
+    const p=v.play();
+    if(p && p.then){ p.then(removeTap).catch(function(){ needTap(); }); }
+  }
   function show(cur){
-    clearTimeout(timer);
+    clearTimeout(timer); clearTimeout(stall);
+    if(cur.tagName!=='VIDEO') removeTap();
     const list=media();
     list.forEach(function(m){ m.classList.remove('active'); if(m.tagName==='VIDEO') m.pause(); });
     cur.classList.add('active');
@@ -86,13 +106,18 @@ document.querySelectorAll('.feat-photo[data-topic]').forEach(function(container)
     }
     if(cur.tagName==='VIDEO'){
       cur.currentTime=0;
-      cur.play().catch(function(){});
+      playVideo(cur);
       cur.onended=next;
       timer=setTimeout(next,20000);
+      stall=setTimeout(function(){ if(cur.readyState<3 && media().length>1 && !container.querySelector('.feat-play')) next(); },9000);
     } else {
       timer=setTimeout(next,2000);
     }
   }
+  document.addEventListener('touchend',function(){
+    const act=container.querySelector('.feat-media.active');
+    if(act && act.tagName==='VIDEO' && act.paused) playVideo(act);
+  },{once:true,passive:true});
   function add(m,idx){
     m.classList.add('feat-media');
     m.dataset.order=idx;
