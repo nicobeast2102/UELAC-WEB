@@ -661,7 +661,7 @@ html.dark-mode .feature-photo{background:var(--dm-bg-soft);}
 /* rotating photo slides: fade between photos; .fit shows the whole photo over a blurred copy of itself */
 .slide{position:absolute;inset:0;overflow:hidden;opacity:0;transition:opacity 1s ease;}
 .slide.active{opacity:1;}
-.slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s ease;}
+.slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos,center);transition:transform .7s ease;}
 .slide.fit::before{content:"";position:absolute;inset:-24px;background:var(--bg) center/cover no-repeat;filter:blur(22px) brightness(.85) saturate(1.1);}
 .slide.fit img{object-fit:contain;}
 footer::before{animation-play-state:paused;}
