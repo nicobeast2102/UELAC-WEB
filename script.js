@@ -232,12 +232,29 @@ document.querySelectorAll('.feat').forEach(function(card){
       list.forEach(function(sl){ sl.classList.remove('active'); box.appendChild(sl); });
       if(list.length) list[0].classList.add('active');
     }
+    // photos download only when they are about to be shown (current + next), not all at once
+    function loadSlide(sl){
+      if(!sl) return;
+      const img=sl.querySelector('img');
+      if(!img || !img.dataset.src) return;
+      const src=img.dataset.src;
+      img.removeAttribute('data-src');
+      img.src=src;
+      if(sl.classList.contains('fit')) sl.style.setProperty('--bg','url("'+src+'")');
+    }
+    function warm(){
+      const list=slides();
+      if(!list.length) return;
+      let k=list.findIndex(function(x){ return x.classList.contains('active'); });
+      if(k<0) k=0;
+      loadSlide(list[k]); loadSlide(list[(k+1)%list.length]);
+    }
     // a photo that is missing removes itself; make sure something is always showing
     function ensure(){
       const list=slides();
       if(list.length && !list.some(function(x){ return x.classList.contains('active'); })) list[0].classList.add('active');
     }
-    setTimeout(ensure,1200); setTimeout(ensure,3000);
+    setTimeout(function(){ ensure(); warm(); },1200); setTimeout(function(){ ensure(); warm(); },3000);
     let timer, starter;
     function step(){
       const list=slides();
@@ -245,6 +262,7 @@ document.querySelectorAll('.feat').forEach(function(card){
       const k=list.findIndex(function(x){ return x.classList.contains('active'); });
       list.forEach(function(x){ x.classList.remove('active'); });
       list[(k+1)%list.length].classList.add('active');
+      warm();
     }
     function stop(){ clearTimeout(starter); clearInterval(timer); }
     function start(){
@@ -254,6 +272,15 @@ document.querySelectorAll('.feat').forEach(function(card){
     }
     if('IntersectionObserver' in window){
       new IntersectionObserver(function(entries){ if(entries[0].isIntersecting) start(); else stop(); },{threshold:0.2}).observe(box);
-    } else { start(); }
+      const pre=new IntersectionObserver(function(entries){ if(entries[0].isIntersecting){ warm(); pre.disconnect(); } },{rootMargin:'300px'});
+      pre.observe(box);
+    } else { warm(); start(); }
   });
+})();
+
+// footer wallpaper shimmer: runs only while the footer is visible
+(function(){
+  const f=document.querySelector('footer');
+  if(!f || !('IntersectionObserver' in window)) return;
+  new IntersectionObserver(function(e){ f.classList.toggle('in-view',e[0].isIntersecting); }).observe(f);
 })();
