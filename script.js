@@ -221,26 +221,39 @@ document.querySelectorAll('.feat').forEach(function(card){
   });
 })();
 
-// home "Explora el Liceo": each tile fades through its own set of photos
+// home: tiles ("Explora el Liceo") and photo slots ("Por qué elegirnos") fade through their slides;
+// data-shuffle puts the photos in a random order on every visit
 (function(){
-  document.querySelectorAll('.bento-tile').forEach(function(tile,n){
-    function imgs(){ return Array.prototype.slice.call(tile.querySelectorAll('.tile-img')); }
+  document.querySelectorAll('.bento-tile,.feature-photo[data-rotate]').forEach(function(box,n){
+    function slides(){ return Array.prototype.slice.call(box.querySelectorAll('.slide')); }
+    if(box.hasAttribute('data-shuffle')){
+      const list=slides();
+      for(let i=list.length-1;i>0;i--){ const r=Math.floor(Math.random()*(i+1)); const t=list[i]; list[i]=list[r]; list[r]=t; }
+      list.forEach(function(sl){ sl.classList.remove('active'); box.appendChild(sl); });
+      if(list.length) list[0].classList.add('active');
+    }
+    // a photo that is missing removes itself; make sure something is always showing
+    function ensure(){
+      const list=slides();
+      if(list.length && !list.some(function(x){ return x.classList.contains('active'); })) list[0].classList.add('active');
+    }
+    setTimeout(ensure,1200); setTimeout(ensure,3000);
     let timer, starter;
     function step(){
-      const list=imgs();
+      const list=slides();
       if(!list.length) return;
-      const k=list.findIndex(function(i){ return i.classList.contains('active'); });
-      list.forEach(function(i){ i.classList.remove('active'); });
+      const k=list.findIndex(function(x){ return x.classList.contains('active'); });
+      list.forEach(function(x){ x.classList.remove('active'); });
       list[(k+1)%list.length].classList.add('active');
     }
+    function stop(){ clearTimeout(starter); clearInterval(timer); }
     function start(){
       stop();
-      if(imgs().length<2) return;
-      starter=setTimeout(function(){ timer=setInterval(step,3200); },n*600);
+      if(slides().length<2) return;
+      starter=setTimeout(function(){ timer=setInterval(step,3400); },n*600);
     }
-    function stop(){ clearTimeout(starter); clearInterval(timer); }
     if('IntersectionObserver' in window){
-      new IntersectionObserver(function(entries){ if(entries[0].isIntersecting) start(); else stop(); },{threshold:0.2}).observe(tile);
+      new IntersectionObserver(function(entries){ if(entries[0].isIntersecting) start(); else stop(); },{threshold:0.2}).observe(box);
     } else { start(); }
   });
 })();
