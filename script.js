@@ -145,7 +145,7 @@ document.querySelectorAll('.feat').forEach(function(card){
 (function(){
   if(!('IntersectionObserver' in window)) return;
   if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const sel='.page-hero > *,.section-head,.feature-card,.mv-card,.value-chip,.auth-card-v2,.stats-band,.serv-card,.extra-card,.uniforme-item,details.level,.faq-item,.bento-tile,.horario-wrap,.doc-cols > *,.info-grid > *,.lema-wide,.gal-head,.marquee';
+  const sel='.page-hero > *,.section-head,.feature-card,.mv-card,.value-chip,.auth-card-v2,.stats-band,.serv-card,.extra-card,.uniforme-item,.uf-card,details.level,.faq-item,.bento-tile,.horario-wrap,.doc-cols > *,.info-grid > *,.lema-wide,.gal-head,.marquee';
   const els=document.querySelectorAll(sel);
   const io=new IntersectionObserver(function(entries){
     entries.forEach(function(e){
@@ -283,4 +283,69 @@ document.querySelectorAll('.feat').forEach(function(card){
   const f=document.querySelector('footer');
   if(!f || !('IntersectionObserver' in window)) return;
   new IntersectionObserver(function(e){ f.classList.toggle('in-view',e[0].isIntersecting); }).observe(f);
+})();
+
+// uniform cards: slideshow (each change updates the caption) + "+" button that opens the whole uniform
+(function(){
+  document.querySelectorAll('.uf-card').forEach(function(card){
+    const box=card.querySelector('.uf-photo');
+    const cap=card.querySelector('.uf-caption');
+    const dotsBox=card.querySelector('.uf-dots');
+    const imgs=Array.prototype.slice.call(box.querySelectorAll('img'));
+    const dots=Array.prototype.slice.call(dotsBox.querySelectorAll('button'));
+    let current=imgs[0], timer, inView=false, started=false;
+    function ok(){ return imgs.filter(function(i){ return !i.classList.contains('missing'); }); }
+    function load(img){
+      if(!img || !img.dataset.src) return;
+      const s=img.dataset.src;
+      img.removeAttribute('data-src');
+      img.onerror=function(){
+        img.classList.add('missing');
+        dots[imgs.indexOf(img)].classList.add('gone');
+        if(ok().length===0) box.classList.add('empty');
+        else if(img===current) next();
+      };
+      img.src=s;
+    }
+    function setCaption(t){
+      cap.classList.add('swap');
+      setTimeout(function(){ cap.textContent=t; cap.classList.remove('swap'); },200);
+    }
+    function show(img){
+      clearTimeout(timer);
+      imgs.forEach(function(i){ i.classList.remove('active'); });
+      img.classList.add('active');
+      current=img;
+      dots.forEach(function(d,k){ d.classList.toggle('on',imgs[k]===img); });
+      setCaption(img.dataset.name);
+      load(img);
+      const list=ok();
+      load(list[(list.indexOf(img)+1)%list.length]);
+      if(list.length>1 && inView) timer=setTimeout(next,2800);
+    }
+    function next(){
+      const list=ok();
+      if(!list.length) return;
+      show(list[(Math.max(list.indexOf(current),0)+1)%list.length]);
+    }
+    dots.forEach(function(d,k){
+      d.addEventListener('click',function(){ if(!imgs[k].classList.contains('missing')) show(imgs[k]); });
+    });
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(e){
+        inView=e[0].isIntersecting;
+        if(inView){ if(!started){ started=true; load(current); load(imgs[1]); } show(current); }
+        else clearTimeout(timer);
+      },{threshold:0.2}).observe(box);
+    } else { inView=true; started=true; load(current); show(current); }
+
+    const btn=card.querySelector('.uf-toggle');
+    const panel=card.querySelector('.uf-panel');
+    btn.addEventListener('click',function(){
+      const open=btn.getAttribute('aria-expanded')==='true';
+      btn.setAttribute('aria-expanded',open?'false':'true');
+      panel.hidden=open;
+      btn.querySelector('.lbl').textContent=open?'Ver todo el uniforme':'Ocultar uniforme';
+    });
+  });
 })();
