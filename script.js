@@ -49,11 +49,14 @@ if(contactForm){
       nombre:f['nombre'].value.trim(),
       apellido:f['apellido'].value.trim(),
       email:f['email'].value.trim(),
+      whatsapp:f['whatsapp'].value.trim() || 'No indicó',
       mensaje:f['mensaje'].value.trim(),
       autorizacion_datos:'Sí, aceptó la política de protección de datos (' + new Date().toLocaleString('es-EC',{timeZone:'America/Guayaquil'}) + ')',
       _subject:'Nueva solicitud de información desde la página web',
       _template:'table'
     };
+    const wa=document.getElementById('formWa');
+    if(wa) wa.classList.remove('show');
     btn.disabled=true; const label=btn.textContent; btn.textContent='Enviando…';
     say('Enviando tu mensaje…',false);
     fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)})
@@ -62,10 +65,16 @@ if(contactForm){
         if(res.ok && (res.j.success===true || res.j.success==='true')){
           say('Gracias, tu mensaje fue enviado. Te responderemos pronto.',false);
           contactForm.reset();
-        } else { throw new Error('not sent'); }
+        } else { throw new Error((res.j && res.j.message) || 'not sent'); }
       })
-      .catch(function(){
-        say('No pudimos enviar tu mensaje. Por favor escríbenos por WhatsApp al 0959 284 565 o al correo liceo.catolico@hotmail.com.',true);
+      .catch(function(err){
+        console.warn('Formulario no enviado:',err && err.message);
+        say('No pudimos enviar tu mensaje. No se perdió: puedes enviarlo por WhatsApp con un solo toque, o escribirnos a liceo.catolico@hotmail.com.',true);
+        if(wa){
+          const texto='Hola, soy '+payload.nombre+' '+payload.apellido+' ('+payload.email+(f['whatsapp'].value.trim()?', WhatsApp '+f['whatsapp'].value.trim():'')+'). '+payload.mensaje;
+          wa.href='https://wa.me/593959284565?text='+encodeURIComponent(texto);
+          wa.classList.add('show');
+        }
       })
       .then(function(){ btn.disabled=false; btn.textContent=label; });
   });

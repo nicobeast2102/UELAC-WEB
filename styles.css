@@ -728,3 +728,7 @@ html.dark-mode .form-alt a{color:var(--dm-blue);}
 .form-check a{color:var(--blue);font-weight:700;}
 html.dark-mode .form-check{color:var(--dm-ink-soft);}
 html.dark-mode .form-check a{color:var(--dm-blue);}
+.form-wa{display:none;margin-top:12px;}
+.form-wa.show{display:inline-flex;}
+.form-field .opt{font-weight:500;text-transform:none;letter-spacing:0;color:var(--ink-soft);}
+html.dark-mode .form-field .opt{color:var(--dm-ink-soft);}
