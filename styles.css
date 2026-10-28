@@ -710,3 +710,21 @@ html.dark-mode .uf-toggle{color:var(--dm-blue);border-color:var(--dm-blue);}
 html.dark-mode .uf-toggle .plus{background:var(--dm-blue);color:var(--dm-bg);}
 html.dark-mode .uf-toggle:hover,html.dark-mode .uf-toggle[aria-expanded="true"]{background:var(--dm-blue);color:var(--dm-bg);}
 html.dark-mode .uf-toggle:hover .plus,html.dark-mode .uf-toggle[aria-expanded="true"] .plus{background:var(--dm-bg);color:var(--dm-blue);}
+
+/* contact form: status messages, consent line, hidden spam trap */
+.honeypot{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+.form-consent{font-size:.82rem;color:var(--ink-soft);margin:0 0 14px;}
+.form-note.error{color:#C6516A;}
+.form-alt{font-size:.9rem;margin:16px 0 0;}
+.form-alt a{color:var(--blue);font-weight:700;}
+.btn[disabled]{opacity:.65;cursor:wait;}
+html.dark-mode .form-consent{color:var(--dm-ink-soft);}
+html.dark-mode .form-note{color:var(--dm-blue);}
+html.dark-mode .form-note.error{color:#F08CA0;}
+html.dark-mode .form-alt{color:var(--dm-ink-soft);}
+html.dark-mode .form-alt a{color:var(--dm-blue);}
+.form-check{display:flex;align-items:flex-start;gap:10px;font-size:.9rem;line-height:1.45;color:var(--ink-soft);margin:0 0 16px;cursor:pointer;}
+.form-check input{width:18px;height:18px;margin:2px 0 0;flex-shrink:0;accent-color:var(--blue);cursor:pointer;}
+.form-check a{color:var(--blue);font-weight:700;}
+html.dark-mode .form-check{color:var(--dm-ink-soft);}
+html.dark-mode .form-check a{color:var(--dm-blue);}

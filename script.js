@@ -24,13 +24,50 @@ if(galTrack){
   window.addEventListener('resize',()=>{galIndex=Math.min(galIndex,galMax());galRender();});
 }
 
-// contact form
+// contact form: sends the message by email through FormSubmit (free service, needs a one-time activation)
 const contactForm=document.getElementById('contactForm');
 if(contactForm){
+  const FORM_ENDPOINT='https://formsubmit.co/ajax/liceo.catolico@hotmail.com';
   contactForm.addEventListener('submit',function(e){
     e.preventDefault();
-    document.getElementById('formNote').classList.add('show');
-    this.reset();
+    const note=document.getElementById('formNote');
+    const btn=contactForm.querySelector('button[type="submit"]');
+    function say(msg,isError){
+      note.textContent=msg;
+      note.classList.toggle('error',!!isError);
+      note.classList.add('show');
+    }
+    if(contactForm.elements['_honey'] && contactForm.elements['_honey'].value) return;   // a bot filled the hidden field
+    const consent=contactForm.elements['autorizo'];
+    if(consent){
+      consent.setCustomValidity(consent.checked?'':'Debes autorizar el uso de tu información para poder enviar el formulario.');
+      consent.addEventListener('change',function(){ consent.setCustomValidity(''); },{once:true});
+    }
+    if(!contactForm.checkValidity()){ contactForm.reportValidity(); return; }
+    const f=contactForm.elements;
+    const payload={
+      nombre:f['nombre'].value.trim(),
+      apellido:f['apellido'].value.trim(),
+      email:f['email'].value.trim(),
+      mensaje:f['mensaje'].value.trim(),
+      autorizacion_datos:'Sí, aceptó la política de protección de datos (' + new Date().toLocaleString('es-EC',{timeZone:'America/Guayaquil'}) + ')',
+      _subject:'Nueva solicitud de información desde la página web',
+      _template:'table'
+    };
+    btn.disabled=true; const label=btn.textContent; btn.textContent='Enviando…';
+    say('Enviando tu mensaje…',false);
+    fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(res){
+        if(res.ok && (res.j.success===true || res.j.success==='true')){
+          say('Gracias, tu mensaje fue enviado. Te responderemos pronto.',false);
+          contactForm.reset();
+        } else { throw new Error('not sent'); }
+      })
+      .catch(function(){
+        say('No pudimos enviar tu mensaje. Por favor escríbenos por WhatsApp al 0959 284 565 o al correo liceo.catolico@hotmail.com.',true);
+      })
+      .then(function(){ btn.disabled=false; btn.textContent=label; });
   });
 }
 

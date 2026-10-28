@@ -51,13 +51,16 @@
 <section class="section">
   <div class="wrap">
     <div class="info-grid">
-      <form id="contactForm">
-        <div class="form-field"><label for="nombre">Nombre</label><input id="nombre" type="text" required></div>
-        <div class="form-field"><label for="apellido">Apellido</label><input id="apellido" type="text" required></div>
-        <div class="form-field"><label for="email">E-mail</label><input id="email" type="email" required></div>
-        <div class="form-field"><label for="mensaje">Mensaje</label><textarea id="mensaje" required></textarea></div>
+      <form id="contactForm" novalidate>
+        <div class="form-field"><label for="nombre">Nombre</label><input id="nombre" name="nombre" type="text" required autocomplete="given-name"></div>
+        <div class="form-field"><label for="apellido">Apellido</label><input id="apellido" name="apellido" type="text" required autocomplete="family-name"></div>
+        <div class="form-field"><label for="email">E-mail</label><input id="email" name="email" type="email" required autocomplete="email"></div>
+        <div class="form-field"><label for="mensaje">Mensaje</label><textarea id="mensaje" name="mensaje" required></textarea></div>
+        <div class="honeypot" aria-hidden="true"><label>No llenar este campo<input type="text" name="_honey" tabindex="-1" autocomplete="off"></label></div>
+        <label class="form-check"><input type="checkbox" id="autorizo" name="autorizo" required><span>Autorizo el uso de mi información según la <a href="docs/politica-datos.pdf" target="_blank" rel="noopener">política de protección de datos</a>.</span></label>
         <button type="submit" class="btn">Enviar mensaje</button>
-        <p class="form-note" id="formNote">Gracias, hemos recibido tu mensaje. Te contactaremos pronto.</p>
+        <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
+        <p class="form-alt">¿Prefieres una respuesta inmediata? <a href="https://wa.me/593959284565?text=%F0%9F%91%8B%20Hola%2C%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20su%20escuelita%20%F0%9F%8F%AB" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>.</p>
       </form>
       <div>
         <div class="map-frame">
