@@ -340,12 +340,24 @@ document.querySelectorAll('.feat').forEach(function(card){
     } else { inView=true; started=true; load(current); show(current); }
 
     const btn=card.querySelector('.uf-toggle');
-    const panel=card.querySelector('.uf-panel');
     btn.addEventListener('click',function(){
+      const panel=document.getElementById(btn.getAttribute('aria-controls'));
+      if(!panel) return;
       const open=btn.getAttribute('aria-expanded')==='true';
+      // only one uniform open at a time
+      document.querySelectorAll('.uf-toggle').forEach(function(b){
+        if(b===btn) return;
+        b.setAttribute('aria-expanded','false');
+        b.querySelector('.lbl').textContent='Ver todo el uniforme';
+        b.closest('.uf-card').classList.remove('open');
+        const p=document.getElementById(b.getAttribute('aria-controls'));
+        if(p) p.hidden=true;
+      });
       btn.setAttribute('aria-expanded',open?'false':'true');
+      card.classList.toggle('open',!open);
       panel.hidden=open;
       btn.querySelector('.lbl').textContent=open?'Ver todo el uniforme':'Ocultar uniforme';
+      if(!open && panel.scrollIntoView) panel.scrollIntoView({behavior:'smooth',block:'nearest'});
     });
   });
 })();
