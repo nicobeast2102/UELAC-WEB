@@ -732,3 +732,22 @@ html.dark-mode .form-check a{color:var(--dm-blue);}
 .form-wa.show{display:inline-flex;}
 .form-field .opt{font-weight:500;text-transform:none;letter-spacing:0;color:var(--ink-soft);}
 html.dark-mode .form-field .opt{color:var(--dm-ink-soft);}
+
+/* icons: modern line icons (Lucide, ISC license). Day = solid blue tile; night = soft tile with a yellow dot */
+.ico{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.value-chip .ic,.feat .mark,.serv-card .mark,.feature-card .icon,.floating-badge .ic{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  width:52px;height:52px;border-radius:16px;font-size:0;
+  background:linear-gradient(135deg,#1B3FD1,#3F63E0);color:#fff;box-shadow:0 8px 18px rgba(27,63,209,.28);
+}
+.value-chip .ic{margin:0 auto 12px;}
+.floating-badge .ic{width:45px;height:45px;border-radius:13px;}
+.floating-badge .ic .ico{width:22px;height:22px;}
+.path-nodes .dot .ico{width:22px;height:22px;}
+.map-btn .ico{width:18px;height:18px;}
+html.dark-mode .value-chip .ic,html.dark-mode .feat .mark,html.dark-mode .serv-card .mark,html.dark-mode .feature-card .icon,html.dark-mode .floating-badge .ic{
+  background:rgba(110,140,255,.16);color:var(--dm-blue);box-shadow:none;
+}
+html.dark-mode .value-chip .ic::after,html.dark-mode .feat .mark::after,html.dark-mode .serv-card .mark::after,html.dark-mode .feature-card .icon::after,html.dark-mode .floating-badge .ic::after{
+  content:"";position:absolute;top:-4px;right:-4px;width:13px;height:13px;border-radius:50%;background:var(--yellow);border:3px solid var(--dm-card);
+}
